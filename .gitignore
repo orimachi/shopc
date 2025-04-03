@@ -1,0 +1,33 @@
+### Gradle ###
+.gradle/
+
+### Build directories ###
+build/
+bin/
+out/
+target/
+
+### Intellij IDE ###
+.idea/
+*.iml
+
+### Logs & Generated Files ###
+build.log
+dump.rdb
+dependency-reduced-pom.xml
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### Artifacts ###
+*.jar
+*.war
+*.class
+
+### Git ###
+.git-hooks/
+
+### Others ###
+HELP.md
+
+### Enviroment File ##
+.env
