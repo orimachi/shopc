@@ -14,6 +14,6 @@ public interface CartMapper extends BaseMapper<Cart, CartRequest, CartResponse>{
     CartResponse toDTO(Cart entity);
 
     @Override
-    @Mapping(target = "customerID", ignore = true)
+    @Mapping(target = "customer.id", ignore = true)
     Cart toEntity(CartRequest request);
 }
