@@ -26,4 +26,5 @@ public class ProductServiceImp extends BaseServiceImp<Product,Integer,ProductReq
         return productMapper;
     }
 
+
 }

@@ -3,7 +3,7 @@ package backend.config.RedisConfig;
 import backend.utils.redis.CustomCacheErrorHandler;
 import backend.utils.redis.CustomRedisSerializer;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.cache.annotation.CachingConfigurer;
@@ -12,10 +12,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
@@ -23,7 +26,6 @@ import java.time.Duration;
 @Configuration
 @RequiredArgsConstructor
 public class RedisConfig implements CachingConfigurer {
-    private final CustomCacheErrorHandler customCacheErrorHandler;
     private final ConnectionPoolProperties connectionPoolProperties;
     private final RedisProperties redisProperties;
 
@@ -38,7 +40,7 @@ public class RedisConfig implements CachingConfigurer {
 
     @Override
     public CacheErrorHandler errorHandler() {
-        return customCacheErrorHandler;
+        return new CustomCacheErrorHandler();
     }
 
     @Bean
@@ -80,5 +82,16 @@ public class RedisConfig implements CachingConfigurer {
         return redisStandaloneConfiguration;
     }
 
+    @Bean(name = "customRedisTemplate")
+    public RedisTemplate<Object, Object> customRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setDefaultSerializer(new CustomRedisSerializer());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new CustomRedisSerializer());
+        redisTemplate.setHashValueSerializer(new CustomRedisSerializer());
+        return redisTemplate;
+    }
 
 }
